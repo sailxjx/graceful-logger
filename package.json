@@ -1,0 +1,29 @@
+{
+  "name": "graceful-logger",
+  "version": "0.0.1",
+  "description": "A simple, slim, graceful logger for Nodejs",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/sailxjx/graceful-logger.git"
+  },
+  "keywords": [
+    "logger",
+    "graceful"
+  ],
+  "author": "sailxjx",
+  "license": {
+    "type": "MIT",
+    "url": "http://sailxjx.mit-license.org"
+  },
+  "bugs": {
+    "url": "https://github.com/sailxjx/graceful-logger/issues"
+  },
+  "devDependencies": {
+    "cake-dog": "~0.1.12"
+  },
+  "dependencies": {
+    "colors": "~0.6.2"
+  }
+}
