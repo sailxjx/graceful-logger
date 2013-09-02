@@ -15,16 +15,19 @@ class Logger
     return this
 
   @info: ->
+    return console.log.apply(this, arguments) unless process.stdout.isTTY
     args = (v for i, v of arguments)
     args.unshift(Logger.prefix.info.green)
     console.log.apply(this, args)
 
   @warn: ->
+    return console.warn.apply(this, arguments) unless process.stderr.isTTY
     args = (v for i, v of arguments)
     args.unshift(Logger.prefix.warn.yellow)
     console.warn.apply(this, args)
 
   @err: ->
+    return console.error.apply(this, arguments) unless process.stderr.isTTY
     args = (v for i, v of arguments)
     args.unshift(Logger.prefix.err.red)
     console.error.apply(this, args)

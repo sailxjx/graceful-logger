@@ -9,3 +9,4 @@ logger = new Logger()
 logger.info('this is a message')
 logger.warn('this is a warning')
 logger.err('this is an error')
+
