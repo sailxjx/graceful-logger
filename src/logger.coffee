@@ -41,4 +41,7 @@ class Logger
   err: ->
     Logger.err.apply(this, arguments)
 
+  @logger: (options = {}) ->
+    new Logger(options)
+
 module.exports = Logger
