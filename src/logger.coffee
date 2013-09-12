@@ -7,6 +7,11 @@ class Logger
     warn: 'WARN:'
     err: 'ERR!:'
 
+  format: (msg) ->
+    return @options.format.replace(/\%s/g, msg)
+               .replace(/\%t/g, "#{new Date}") if @options.format?
+    return msg
+
   constructor: (@options = {}) ->
 
   _log: (str, prefix = '') =>
@@ -33,13 +38,19 @@ class Logger
     console.error.apply(this, args)
 
   info: ->
-    Logger.info.apply(this, arguments)
+    msg = (str for i, str of arguments).join('')
+    msg = @format(msg) if @options.format?
+    Logger.info.apply(this, [msg])
 
   warn: ->
-    Logger.warn.apply(this, arguments)
+    msg = (str for i, str of arguments).join('')
+    msg = @format(msg) if @options.format?
+    Logger.warn.apply(this, [msg])
 
   err: ->
-    Logger.err.apply(this, arguments)
+    msg = (str for i, str of arguments).join('')
+    msg = @format(msg) if @options.format?
+    Logger.err.apply(this, [msg])
 
   @logger: (options = {}) ->
     new Logger(options)
