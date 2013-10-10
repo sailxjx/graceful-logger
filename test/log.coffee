@@ -1,14 +1,13 @@
-Logger = require('../lib/logger')
+logger = require('../lib')
 
-Logger.info('this is a message', 'hello')
-Logger.warn({a: 'a', b: 'b'})
-Logger.err(require('path'))
+logger.info('this is a message', 'hello')
+logger.warn({a: 'a', b: 'b'})
+logger.err(require('path'))
 
-logger = new Logger({
+logger1 = new logger.Logger({
   format: '%t - %s'
   })
 
-logger.info('this is a message')
-logger.warn('this is a warning')
-logger.err('this is an error')
-
+logger1.info('this is a message')
+logger1.warn('this is a warning')
+logger1.err('this is an error')

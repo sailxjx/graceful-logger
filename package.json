@@ -2,7 +2,7 @@
   "name": "graceful-logger",
   "version": "0.0.4",
   "description": "A simple, slim, graceful logger for Nodejs",
-  "main": "index.js",
+  "main": "lib",
   "scripts": {},
   "repository": {
     "type": "git",
@@ -21,7 +21,7 @@
     "url": "https://github.com/sailxjx/graceful-logger/issues"
   },
   "devDependencies": {
-    "cake-dog": "~0.1.12"
+    "cake-dog": "~0.2.0"
   },
   "dependencies": {
     "colors": "~0.6.2"
