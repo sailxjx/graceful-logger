@@ -4,25 +4,36 @@ logger = new Logger({
   format: '%t - %s'
 })
 
+_callback = (err) ->
+  logger.err(err.stack)
+  process.domain.dispose() if process.domain?
+  process.exit(1)
+
+_uncaughtBounded = false
+
 middleware = (options) ->
+
+  process.on('uncaughtException', _callback) unless _uncaughtBounded
+  _uncaughtBounded = true
 
   _middle = (req, res, callback = ->) ->
     dm = domain.create()
-    dm.add(req)
-    dm.add(res)
 
-    res.on 'close', ->
-      dm.dispose()
+    if arguments.length is 1 and typeof arguments[0] is 'function'
+      callback = arguments[0]
+    else
+      dm.add(req)
+      dm.add(res)
 
-    res.on 'finish', ->
-      dm.dispose()
+      res.on 'close', ->
+        dm.dispose()
+
+      res.on 'finish', ->
+        dm.dispose()
 
     dm.on 'error', (err) ->
       dm.dispose()
-      logger.err(err.stack)
-      process.exit(1)
-
-    process.on 'uncaughtException', dm.intercept()
+      _callback(err)
 
     dm.run(callback)
 
