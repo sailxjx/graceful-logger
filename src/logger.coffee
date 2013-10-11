@@ -1,5 +1,4 @@
 colors = require('colors')
-middleware = require('./middleware')
 
 class Logger
 
@@ -21,26 +20,26 @@ class Logger
 
   constructor: (@options = {}) ->
     @prefix =
-      info: 'info:'.green
-      warn: 'WARN:'.yellow
-      err: 'ERR!:'.red
+      info: 'info:'
+      warn: 'WARN:'
+      err: 'ERR!:'
 
   info: ->
-    return console.log.apply(this, arguments) unless process.stdout.isTTY
     args = @format.apply(this, arguments)
-    args.unshift(@prefix.info)
+    prefix = if process.stdout.isTTY then @prefix.info.green else @prefix.info
+    args.unshift(prefix)
     console.log.apply(this, args)
 
   warn: ->
-    return console.warn.apply(this, arguments) unless process.stderr.isTTY
     args = @format.apply(this, arguments)
-    args.unshift(@prefix.warn)
+    prefix = if process.stdout.isTTY then @prefix.warn.yellow else @prefix.warn
+    args.unshift(prefix)
     console.warn.apply(this, args)
 
   err: ->
-    return console.error.apply(this, arguments) unless process.stderr.isTTY
     args = @format.apply(this, arguments)
-    args.unshift(@prefix.err)
+    prefix = if process.stdout.isTTY then @prefix.err.red else @prefix.err
+    args.unshift(prefix)
     console.error.apply(this, args)
 
 module.exports = Logger
