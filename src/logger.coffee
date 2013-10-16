@@ -5,7 +5,6 @@ class Logger
   format: ->
     msgs = (v for i, v of arguments)
     if @options.format? and typeof @options.format is 'string'
-      # matches = @options.format.match(/(\%s|\%t|.+?)/g)
       matches = @options.format.split(' ')
       replaces =
         '%s': (i) ->
@@ -19,27 +18,39 @@ class Logger
     return msgs
 
   constructor: (@options = {}) ->
-    @prefix =
+    @level = 'info'
+    @prefixs =
       info: 'info:'
       warn: 'WARN:'
       err: 'ERR!:'
+    @levels =
+      info:
+        color: 'green'
+        method: console.log
+      warn:
+        color: 'yellow'
+        method: console.warn
+      err:
+        color: 'red'
+        method: console.error
+
+  _log: ->
+    return @options.custom.apply(this, arguments) if typeof @options.custom is 'function'
+    @prefix = if process.stdout.isTTY then @prefixs[@level][@levels[@level].color] else @prefixs[@level]
+    msgs = @format.apply(this, arguments)
+    msgs.unshift(@prefix)
+    @levels[@level].method.apply(this, msgs)
 
   info: ->
-    args = @format.apply(this, arguments)
-    prefix = if process.stdout.isTTY then @prefix.info.green else @prefix.info
-    args.unshift(prefix)
-    console.log.apply(this, args)
+    @level = 'info'
+    @_log.apply(this, arguments)
 
   warn: ->
-    args = @format.apply(this, arguments)
-    prefix = if process.stdout.isTTY then @prefix.warn.yellow else @prefix.warn
-    args.unshift(prefix)
-    console.warn.apply(this, args)
+    @level = 'warn'
+    @_log.apply(this, arguments)
 
   err: ->
-    args = @format.apply(this, arguments)
-    prefix = if process.stdout.isTTY then @prefix.err.red else @prefix.err
-    args.unshift(prefix)
-    console.error.apply(this, args)
+    @level = 'err'
+    @_log.apply(this, arguments)
 
 module.exports = Logger
