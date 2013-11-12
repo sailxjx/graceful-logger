@@ -4,7 +4,7 @@
   "description": "A simple, slim, graceful logger for Nodejs",
   "main": "lib",
   "scripts": {
-    "test": "coffee test/log.coffee"
+    "test": "make test"
   },
   "repository": {
     "type": "git",
