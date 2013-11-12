@@ -51,6 +51,14 @@ class Logger
 
   err: ->
     @level = 'err'
-    @_log.apply(this, arguments)
+    len = arguments.length
+    if typeof arguments[len - 1] is 'number'
+      args = (v for i, v of arguments)
+      code = args[len - 1]
+      args.pop()
+    else
+      args = arguments
+    @_log.apply(this, args)
+    process.exit(code) if code?
 
 module.exports = Logger

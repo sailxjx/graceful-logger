@@ -23,7 +23,10 @@
     "url": "https://github.com/sailxjx/graceful-logger/issues"
   },
   "devDependencies": {
-    "cake-dog": "~0.2.0"
+    "cake-dog": "~0.2.0",
+    "should": "~2.1.0",
+    "coffee-script": "~1.6.3",
+    "mocha": "~1.14.0"
   },
   "dependencies": {
     "colors": "~0.6.2"
