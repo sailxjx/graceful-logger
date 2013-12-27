@@ -23,6 +23,7 @@ class Logger
       info: 'info:'
       warn: 'WARN:'
       err: 'ERR!:'
+      debug: 'DEBUG:'
     @levels =
       info:
         color: 'green'
@@ -33,6 +34,9 @@ class Logger
       err:
         color: 'red'
         method: console.error
+      debug:
+        color: 'cyan'
+        method: console.log
 
   _log: ->
     return @options.custom.apply(this, arguments) if typeof @options.custom is 'function'
@@ -47,6 +51,11 @@ class Logger
 
   warn: ->
     @level = 'warn'
+    @_log.apply(this, arguments)
+
+  debug: ->
+    return false unless @options.debug
+    @level = 'debug'
     @_log.apply(this, arguments)
 
   err: ->

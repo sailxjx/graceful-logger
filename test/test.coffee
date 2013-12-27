@@ -80,3 +80,20 @@ describe 'logger#error', ->
     child.on 'exit', (err) ->
       err.should.eql(1)
       done()
+
+describe 'logger#debug', ->
+  it 'should not output anything without debug flag', (done) ->
+    child = fork("#{__dirname}/logger-debug-null.coffee", [], {silent: true})
+    output = ''
+    child.stdout.on 'data', (data) -> output += data
+    child.on 'exit', (err) ->
+      output.should.be.eql('')
+      done()
+
+  it 'should output debug message by debug flag', (done) ->
+    child = fork("#{__dirname}/logger-debug.coffee", [], {silent: true})
+    output = ''
+    child.stdout.on 'data', (data) -> output += data
+    child.on 'exit', (err) ->
+      output.should.be.eql('DEBUG: debug message\n')
+      done()
