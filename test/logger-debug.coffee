@@ -1,4 +1,4 @@
 logger = require('../lib')
-logger.options.debug = true
+logger._debug = true
 
 logger.debug('debug message')

@@ -2,64 +2,73 @@ colors = require('colors')
 
 class Logger
 
-  format: ->
-    msgs = (v for i, v of arguments)
-    if @options.format? and typeof @options.format is 'string'
-      matches = @options.format.split(' ')
-      replaces =
-        '%s': (i) ->
-          i = Number(i)
-          matches = matches[..i-1].concat(msgs, matches[i+1..])
-        '%t': (i) ->
-          matches[i] = new Date
-      for i, ft of matches
-        replaces[ft].call(this, i) if replaces[ft]?
-      msgs = matches
-    return msgs
+  _formats = ['default']
 
-  constructor: (@options = {}) ->
-    @level = 'info'
-    @prefixs =
-      info: 'info:'
-      warn: 'WARN:'
-      err: 'ERR!:'
-      debug: 'DEBUG:'
-    @levels =
-      info:
-        color: 'green'
-        method: console.log
-      warn:
-        color: 'yellow'
-        method: console.warn
-      err:
-        color: 'red'
-        method: console.error
-      debug:
-        color: 'cyan'
-        method: console.log
+  constructor: (format) ->
+    if format? then @format(format) else @_formatMethod = @_defaultFormat
 
-  _log: ->
-    return @options.custom.apply(this, arguments) if typeof @options.custom is 'function'
-    @prefix = if process.stdout.isTTY then @prefixs[@level][@levels[@level].color] else @prefixs[@level]
-    msgs = @format.apply(this, arguments)
-    msgs.unshift(@prefix)
-    @levels[@level].method.apply(this, msgs)
+  format: (format) ->
+    return false unless format.length
+    if format in _formats
+      @_formatMethod = @["_#{format}Format"]
+    else
+      @_format = format
+      @_formatMethod = @_customFormat
+    return this
+
+  _defaultFormat: ->
+    @_format = 'color(:level:) :msg'
+    @_customFormat.apply(this, arguments)
+
+  _customFormat: ->
+    msgArr = []
+    for i, val of arguments
+      if typeof val in ['object']
+        msgArr.push(JSON.stringify(val))
+      else
+        msgArr.push("#{val}")
+
+    msg = msgArr.join(' ')
+
+    raw = @_format.replace(/\:level/g, @_level)
+            .replace(/\:date/g, new Date().toISOString())
+            .replace(/\:msg/g, msg)
+
+    # Add color print
+    if matches = raw.match(/color\((.*?)\)/g)
+      if process.stdout.isTTY
+        raw = raw.replace(/color\((.*?)\)/g, '$1'[@_color])
+      else
+        raw = raw.replace(/color\((.*?)\)/g, '$1')
+
+    @_outputMethod(raw)
+
+  _log: -> @_formatMethod.apply(this, arguments)
 
   info: ->
-    @level = 'info'
+    @_level = 'info'
+    @_color = 'green'
+    @_outputMethod = console.log
     @_log.apply(this, arguments)
 
   warn: ->
-    @level = 'warn'
+    @_level = 'warn'
+    @_color = 'yellow'
+    @_outputMethod = console.warn
     @_log.apply(this, arguments)
 
   debug: ->
-    return false unless @options.debug
-    @level = 'debug'
+    return false unless @_debug
+    @_level = 'debug'
+    @_color = 'cyan'
+    @_outputMethod = console.log
     @_log.apply(this, arguments)
 
   err: ->
-    @level = 'err'
+    @_level = 'err!'
+    @_color = 'red'
+    @_outputMethod = console.error
+
     len = arguments.length
     if typeof arguments[len - 1] is 'number'
       args = (v for i, v of arguments)
@@ -68,6 +77,7 @@ class Logger
     else
       args = arguments
     @_log.apply(this, args)
+
     process.exit(code) if code?
 
 module.exports = Logger
