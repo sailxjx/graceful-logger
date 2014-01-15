@@ -49,26 +49,26 @@ class Logger
 
   _log: -> @_formatMethod.apply(this, arguments)
 
-  info: ->
+  info: =>
     @_level = 'info'
     @_color = 'green'
     @_outputMethod = console.log
     @_log.apply(this, arguments)
 
-  warn: ->
+  warn: =>
     @_level = 'warn'
     @_color = 'yellow'
     @_outputMethod = console.warn
     @_log.apply(this, arguments)
 
-  debug: ->
-    return false unless @_debug
+  debug: =>
+    return false unless @_debug or process.env.DEBUG
     @_level = 'debug'
     @_color = 'cyan'
     @_outputMethod = console.log
     @_log.apply(this, arguments)
 
-  err: ->
+  err: =>
     @_level = 'err!'
     @_color = 'red'
     @_outputMethod = console.error
