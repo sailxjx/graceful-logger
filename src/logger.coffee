@@ -2,7 +2,7 @@ colors = require('colors')
 
 class Logger
 
-  _formats = ['default']
+  _formats = ['default', 'medium']
 
   constructor: (format) ->
     if format? then @format(format) else @_formatMethod = @_defaultFormat
@@ -18,6 +18,10 @@ class Logger
 
   _defaultFormat: ->
     @_format = 'color(:level:) :msg'
+    @_customFormat.apply(this, arguments)
+
+  _mediumFormat: ->
+    @_format = 'color([:level :date]) :msg'
     @_customFormat.apply(this, arguments)
 
   _customFormat: ->
