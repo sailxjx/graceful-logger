@@ -1,8 +1,6 @@
 domain = require('domain')
 Logger = require('./logger')
-logger = new Logger({
-  format: '%t - %s'
-})
+logger = new Logger()
 
 _callback = (err) ->
   logger.err(err.stack)

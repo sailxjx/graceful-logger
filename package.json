@@ -14,7 +14,11 @@
     "logger",
     "graceful"
   ],
-  "author": "sailxjx",
+  "author": {
+    "name": "sailxjx",
+    "email": "sailxjx@gmail.com",
+    "url": "http://sailxjx.github.io"
+  },
   "license": {
     "type": "MIT",
     "url": "http://sailxjx.mit-license.org"

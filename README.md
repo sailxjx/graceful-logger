@@ -4,6 +4,10 @@ A simple, slim, graceful logger for Nodejs
 
 [![build status](https://api.travis-ci.org/sailxjx/graceful-logger.png)](https://travis-ci.org/sailxjx/graceful-logger)
 
+# Capture
+
+![output](capture/output.png)
+
 # Example
 ```coffeescript
 logger = require('../lib')
