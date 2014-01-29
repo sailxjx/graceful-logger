@@ -6,7 +6,7 @@ A simple, slim, graceful logger for Nodejs
 
 # Capture
 
-![output](capture/output.png)
+![output](https://raw.github.com/sailxjx/graceful-logger/master/capture/output.png)
 
 # Example
 ```coffeescript
@@ -17,7 +17,6 @@ logger.warn({a: 'a', b: 'b'})
 logger.err(require('path'))
 
 # logger with options
-```coffeescript
 # Initial with format
 logger1 = new logger.Logger('color([:level :date]) - :msg')
 # Or use format method
