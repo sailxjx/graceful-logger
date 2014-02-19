@@ -89,7 +89,7 @@ class Logger
 
     process.exit(code) if code?
 
-  close: ->
+  mute: ->
     @_formatMethod = @_nullFormat
     return this
 

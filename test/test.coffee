@@ -34,8 +34,8 @@ describe 'logger#format', ->
         duration.should.within(0, 1000)
       done()
 
-  it 'should output nothing when use null format', (done) ->
-    child = fork("#{__dirname}/logger-null.coffee", [], {silent: true})
+  it 'should output nothing when use mute', (done) ->
+    child = fork("#{__dirname}/logger-mute.coffee", [], {silent: true})
     data = ''
     child.stdout.on 'data', (_data) ->
       data += _data

@@ -8,7 +8,7 @@ $logger.warn({a: 'a', b: 'b'})
 $logger.err(require('path'))
 
 $logger2 = new logger.Logger()
-$logger2.close()
+$logger2.mute()
 
 $logger2.info('this is a message', 'hello')
 $logger2.warn({a: 'a', b: 'b'})
