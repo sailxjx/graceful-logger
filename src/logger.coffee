@@ -8,17 +8,22 @@ class Logger
     if format? then @format(format) else @_formatMethod = @_defaultFormat
 
   format: (format) ->
-    return false unless format.length
-    if format in _formats
-      @_formatMethod = @["_#{format}Format"]
+    if format? and typeof format is 'string'
+      if format in _formats
+        @_formatMethod = @["_#{format}Format"]
+      else
+        @_format = format
+        @_formatMethod = @_customFormat
     else
-      @_format = format
-      @_formatMethod = @_customFormat
+      @_formatMethod = @_nullFormat
     return this
 
   _defaultFormat: ->
     @_format = 'color(:level:) :msg'
     @_customFormat.apply(this, arguments)
+
+  _nullFormat: ->
+    return false
 
   _mediumFormat: ->
     @_format = 'color([:level :date]) :msg'
@@ -83,5 +88,9 @@ class Logger
     @_log.apply(this, args)
 
     process.exit(code) if code?
+
+  close: ->
+    @_formatMethod = @_nullFormat
+    return this
 
 module.exports = Logger

@@ -34,6 +34,18 @@ describe 'logger#format', ->
         duration.should.within(0, 1000)
       done()
 
+  it 'should output nothing when use null format', (done) ->
+    child = fork("#{__dirname}/logger-null.coffee", [], {silent: true})
+    data = ''
+    child.stdout.on 'data', (_data) ->
+      data += _data
+    child.stderr.on 'data', (_data) ->
+      data += _data
+    child.on 'exit', (err) ->
+      return done(err) if err
+      data.should.eql('')
+      done()
+
 describe 'logger#error', ->
   it 'should exit with error status 1', (done) ->
     child = fork("#{__dirname}/logger-error.coffee", [], {silent: true})
