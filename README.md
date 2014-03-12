@@ -28,6 +28,9 @@ logger1.err('this is an error')
 ```
 
 # ChangeLog
+## 0.2.1
+1. Move exit feature from logger.err to logger.exit
+
 ## 0.2.0
 1. Use meanful tags such as :date, :level, etc...
 2. Remove custom prefix

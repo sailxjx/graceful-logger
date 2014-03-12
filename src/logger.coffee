@@ -1,3 +1,4 @@
+util = require('util')
 colors = require('colors')
 
 class Logger
@@ -30,14 +31,7 @@ class Logger
     @_customFormat.apply(this, arguments)
 
   _customFormat: ->
-    msgArr = []
-    for i, val of arguments
-      if typeof val in ['object']
-        msgArr.push(JSON.stringify(val))
-      else
-        msgArr.push("#{val}")
-
-    msg = msgArr.join(' ')
+    msg = util.format.apply(util, arguments)
 
     raw = @_format.replace(/\:level/g, @_level)
             .replace(/\:date/g, new Date().toISOString())
@@ -50,47 +44,47 @@ class Logger
       else
         raw = raw.replace(/color\((.*?)\)/g, '$1')
 
-    @_outputMethod(raw)
+    @_stream.write(raw + '\n')
 
   _log: -> @_formatMethod.apply(this, arguments)
 
   info: =>
     @_level = 'info'
     @_color = 'green'
-    @_outputMethod = console.log
+    @_stream = process.stdout
     @_log.apply(this, arguments)
 
   warn: =>
     @_level = 'warn'
     @_color = 'yellow'
-    @_outputMethod = console.warn
+    @_stream = process.stderr
+    @_log.apply(this, arguments)
+
+  err: =>
+    @_level = 'err!'
+    @_color = 'red'
+    @_stream = process.stderr
     @_log.apply(this, arguments)
 
   debug: =>
     return false unless @_debug or process.env.DEBUG
     @_level = 'debug'
     @_color = 'cyan'
-    @_outputMethod = console.log
+    @_stream = process.stdout
     @_log.apply(this, arguments)
 
-  err: =>
+  exit: (message, code = 1) =>
     @_level = 'err!'
     @_color = 'red'
-    @_outputMethod = console.error
-
-    len = arguments.length
-    if typeof arguments[len - 1] is 'number'
-      args = (v for i, v of arguments)
-      code = args[len - 1]
-      args.pop()
-    else
-      args = arguments
-    @_log.apply(this, args)
-
-    process.exit(code) if code?
+    @_stream = process.stderr
+    @_log.call(this, message)
+    process.exit(code)
 
   mute: ->
     @_formatMethod = @_nullFormat
     return this
+
+  # Alias
+  error: @::err
 
 module.exports = Logger

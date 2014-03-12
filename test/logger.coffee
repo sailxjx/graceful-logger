@@ -1,5 +1,18 @@
 should = require('should')
 {fork} = require('child_process')
+# logger = require('../lib/index.js')
+# {Logger} = logger
+# fs = require('fs')
+
+# process.stdout.pipe(process.stdin)
+# process.stdin.on 'data', ->
+#   console.log 'fadfasdfas'
+
+# describe 'logger#default', ->
+
+#   it 'should output with the default format', (done) ->
+
+#     logger.info('hello world')
 
 describe 'logger#default', ->
   it 'should output without date', (done) ->
@@ -7,8 +20,8 @@ describe 'logger#default', ->
     output = ''
     needOutput = """
     info: this is a message hello
-    warn: {\"a\":\"a\",\"b\":\"b\"}
-    err!: function () {}\n
+    warn: { a: 'a', b: 'b' }
+    err!: [Function]\n
     """
     child.stdout.on 'data', (data) ->
       output += data.toString()
@@ -47,8 +60,17 @@ describe 'logger#format', ->
       done()
 
 describe 'logger#error', ->
-  it 'should exit with error status 1', (done) ->
+  it 'should output error info', (done) ->
     child = fork("#{__dirname}/logger-error.coffee", [], {silent: true})
+    output = ''
+    child.stderr.on 'data', (data) -> output += data
+    child.on 'exit', (err) ->
+      output.should.eql('err!: error info\n')
+      done()
+
+describe 'logger#exit', ->
+  it 'should exit with error status 1', (done) ->
+    child = fork("#{__dirname}/logger-exit.coffee", [], {silent: true})
     child.on 'exit', (err) ->
       err.should.eql(1)
       done()
