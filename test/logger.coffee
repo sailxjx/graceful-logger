@@ -87,3 +87,18 @@ describe 'logger#setStream', ->
     , (err, content) ->
       content.should.eql("info: #{msg}\n")
       fs.unlink(file, done)
+
+describe 'logger#importUse', ->
+  logger = new Logger
+  logger.setStream 'all'
+  , write: (msg) -> output = msg
+
+  it 'should output message when use info as a single method', ->
+    {info} = logger
+    info('hello')
+    output.should.eql('info: hello\n')
+
+  it 'should also work for alias', ->
+    {error} = logger
+    error('error')
+    output.should.eql('err!: error\n')
