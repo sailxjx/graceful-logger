@@ -6,7 +6,7 @@ A simple, slim, graceful logger for Nodejs
 
 # Capture
 
-![output](https://raw.github.com/sailxjx/graceful-logger/master/capture/output.png)
+![capture](https://raw.github.com/sailxjx/graceful-logger/master/capture/capture.png)
 
 # Example
 ```coffeescript
