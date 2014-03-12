@@ -1,90 +1,92 @@
-util = require('util')
-colors = require('colors')
+util = require 'util'
+colors = require 'colors'
+formats = require './formats'
 
 class Logger
 
-  _formats = ['default', 'medium']
+  constructor: (format, @options = {}) ->
+    if typeof format is 'object'
+      @options = format
+      format = @options.format
 
-  constructor: (format) ->
-    if format? then @format(format) else @_formatMethod = @_defaultFormat
+    @format(format)
+
+    # Define writable stream of each method
+    @info.stream = process.stdout
+    @err.stream = process.stderr
+    @warn.stream = process.stderr
+    @debug.stream = process.stdout
+
+    # Alias
+    @error = @err
+    @warning = @warn
 
   format: (format) ->
-    if format? and typeof format is 'string'
-      if format in _formats
-        @_formatMethod = @["_#{format}Format"]
-      else
-        @_format = format
-        @_formatMethod = @_customFormat
+    if typeof format is 'string'
+      @_format = formats[format] or format or formats.default
     else
-      @_formatMethod = @_nullFormat
+      @_format or= formats.default
     return this
 
-  _defaultFormat: ->
-    @_format = 'color(:level:) :msg'
-    @_customFormat.apply(this, arguments)
+  setStream: (method = 'info', stream) ->
+    all = ['info', 'warn', 'err', 'debug']
+    method = all if method is 'all'
+    if method instanceof Array
+      @[_method]?.stream = stream for i, _method of method
+    else if typeof method is 'string'
+      @[method]?.stream = stream
+    return this
 
-  _nullFormat: ->
-    return false
+  getStream: (method = 'info') ->
+    return @[method]?.stream
 
-  _mediumFormat: ->
-    @_format = 'color([:level :date]) :msg'
-    @_customFormat.apply(this, arguments)
-
-  _customFormat: ->
+  _log: ->
+    return false unless @_format
     msg = util.format.apply(util, arguments)
 
     raw = @_format.replace(/\:level/g, @_level)
             .replace(/\:date/g, new Date().toISOString())
             .replace(/\:msg/g, msg)
 
-    # Add color print
-    if matches = raw.match(/color\((.*?)\)/g)
-      if process.stdout.isTTY
-        raw = raw.replace(/color\((.*?)\)/g, '$1'[@_color])
-      else
-        raw = raw.replace(/color\((.*?)\)/g, '$1')
+    # Print with color
+    if @_stream.isTTY
+      raw = raw.replace(/color\((.*?)\)/g, '$1'[@_color])
+    else
+      raw = raw.replace(/color\((.*?)\)/g, '$1')
 
     @_stream.write(raw + '\n')
-
-  _log: -> @_formatMethod.apply(this, arguments)
 
   info: =>
     @_level = 'info'
     @_color = 'green'
-    @_stream = process.stdout
+    @_stream = @info.stream
     @_log.apply(this, arguments)
 
   warn: =>
     @_level = 'warn'
     @_color = 'yellow'
-    @_stream = process.stderr
+    @_stream = @warn.stream
     @_log.apply(this, arguments)
 
   err: =>
     @_level = 'err!'
     @_color = 'red'
-    @_stream = process.stderr
+    @_stream = @err.stream
     @_log.apply(this, arguments)
 
   debug: =>
-    return false unless @_debug or process.env.DEBUG
+    return false unless @options.debug or process.env.DEBUG
     @_level = 'debug'
     @_color = 'cyan'
-    @_stream = process.stdout
+    @_stream = @debug.stream
     @_log.apply(this, arguments)
 
   exit: (message, code = 1) =>
-    @_level = 'err!'
-    @_color = 'red'
-    @_stream = process.stderr
-    @_log.call(this, message)
+    @err(message)
     process.exit(code)
 
   mute: ->
-    @_formatMethod = @_nullFormat
+    @_format = formats.mute
     return this
-
-  # Alias
-  error: @::err
 
 module.exports = Logger

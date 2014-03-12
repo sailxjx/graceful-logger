@@ -28,6 +28,12 @@ logger1.err('this is an error')
 ```
 
 # ChangeLog
+## 0.3.0
+1. Write message to process.stdout or process.stderr stream
+2. Use `util.format` to format object/function/array etc, as the same of `console.log`
+3. Add `setStream` and `getStream` to `get/set` writable stream of each method
+4. Add `error` as alias of `err`, `warning` as alias of `warn`
+
 ## 0.2.1
 1. Move exit feature from logger.err to logger.exit
 
