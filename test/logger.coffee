@@ -12,23 +12,21 @@ describe 'logger#default', ->
   logger.setStream 'all'
   , write: (msg) -> output = msg
 
-  promise =
-    info: -> output.should.eql("info: " + util.format.apply(util, arguments) + '\n')
-    warn: -> output.should.eql("warn: " + util.format.apply(util, arguments) + '\n')
-    err: -> output.should.eql("err!: " + util.format.apply(util, arguments) + '\n')
+  promise = (str, prefix) ->
+    util.format.call(util, str).split('\n').map((msg) -> "#{prefix}#{msg}").join('\n') + '\n'
 
   it 'should output without date', ->
     msg = 'this is a message'
     logger.info(msg)
-    promise.info(msg)
+    output.should.eql(promise(msg, 'info: '))
 
     msg = { a: 'a', b: 'b' }
     logger.warn(msg)
-    promise.warn(msg)
+    output.should.eql(promise(msg, 'warn: '))
 
     msg = require('path')
     logger.err(msg)
-    promise.err(msg)
+    output.should.eql(promise(msg, 'err!: '))
 
 describe 'logger#format', ->
   logger = new Logger
@@ -102,3 +100,16 @@ describe 'logger#importUse', ->
     {error} = logger
     error('error')
     output.should.eql('err!: error\n')
+
+describe 'logger#multiLine', ->
+  logger = new Logger
+  logger.setStream 'all'
+  , write: (msg) -> output = msg
+
+  it 'should get multi prefix lines with multi lines message', ->
+    logger.info '''
+    I
+    Am
+    Ok
+    '''
+    output.split('info').length.should.eql(4)

@@ -44,17 +44,18 @@ class Logger
     return false unless @_format
     msg = util.format.apply(util, arguments)
 
-    raw = @_format.replace(/\:level/g, @_level)
-            .replace(/\:date/g, new Date().toISOString())
-            .replace(/\:msg/g, msg)
+    raws = msg.split('\n').map (msg) =>
+      raw = @_format.replace(/\:level/g, @_level)
+              .replace(/\:date/g, new Date().toISOString())
+              .replace(/\:msg/g, msg)
+      # Print with color
+      if @_stream.isTTY
+        raw = raw.replace(/color\((.*?)\)/g, '$1'[@_color])
+      else
+        raw = raw.replace(/color\((.*?)\)/g, '$1')
+      return raw
 
-    # Print with color
-    if @_stream.isTTY
-      raw = raw.replace(/color\((.*?)\)/g, '$1'[@_color])
-    else
-      raw = raw.replace(/color\((.*?)\)/g, '$1')
-
-    @_stream.write(raw + '\n')
+    @_stream.write(raws.join('\n') + '\n')
 
   info: =>
     @_level = 'info'
