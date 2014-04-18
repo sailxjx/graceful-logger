@@ -28,6 +28,9 @@ logger1.err('this is an error')
 ```
 
 # ChangeLog
+## 0.3.1
+1. Add prefix to each line when messages have multi lines.
+
 ## 0.3.0
 1. Write message to process.stdout or process.stderr stream
 2. Use `util.format` to format object/function/array etc, as the same of `console.log`
