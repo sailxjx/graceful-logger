@@ -17,6 +17,19 @@ class Logger
     @warn.stream = process.stderr
     @debug.stream = process.stdout
 
+    # Define levels and colors of each method
+    @info.level = 'info'
+    @info.color = 'green'
+
+    @warn.level = 'warn'
+    @warn.color = 'yellow'
+
+    @err.level = 'err!'
+    @err.color = 'red'
+
+    @debug.level = 'debug'
+    @debug.color = 'cyan'
+
     # Alias
     @error = @err
     @warning = @warn
@@ -58,27 +71,27 @@ class Logger
     @_stream.write(raws.join('\n') + '\n')
 
   info: =>
-    @_level = 'info'
-    @_color = 'green'
+    @_level = @info.level
+    @_color = @info.color
     @_stream = @info.stream
     @_log.apply(this, arguments)
 
   warn: =>
-    @_level = 'warn'
-    @_color = 'yellow'
+    @_level = @warn.level
+    @_color = @warn.color
     @_stream = @warn.stream
     @_log.apply(this, arguments)
 
   err: =>
-    @_level = 'err!'
-    @_color = 'red'
+    @_level = @err.level
+    @_color = @err.color
     @_stream = @err.stream
     @_log.apply(this, arguments)
 
   debug: =>
     return false unless @options.debug or process.env.DEBUG
-    @_level = 'debug'
-    @_color = 'cyan'
+    @_level = @debug.level
+    @_color = @debug.color
     @_stream = @debug.stream
     @_log.apply(this, arguments)
 

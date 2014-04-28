@@ -28,6 +28,9 @@ logger1.err('this is an error')
 ```
 
 # ChangeLog
+## 0.3.2
+1. user can redefine `color` and `level` prefix by set the `color` and `level` property of each method.
+
 ## 0.3.1
 1. Add prefix to each line when messages have multi lines.
 

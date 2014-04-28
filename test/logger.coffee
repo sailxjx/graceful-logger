@@ -113,3 +113,17 @@ describe 'logger#multiLine', ->
     Ok
     '''
     output.split('info').length.should.eql(4)
+
+describe 'logger#mod', ->
+
+  logger = new Logger('color(:level) :msg', debug: 1)
+  logger.setStream 'all',
+    write: (msg) -> output = msg
+    isTTY: true
+
+  it 'should output a customized level and color', ->
+    ['info', 'warn', 'err', 'debug'].forEach (level) ->
+      logger[level].color = 'blue'
+      logger[level].level = "user#{level}"
+      logger[level] '%s', 'hello'
+      output.should.eql("user#{level}".blue + ' hello\n')
