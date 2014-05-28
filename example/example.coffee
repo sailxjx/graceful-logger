@@ -24,3 +24,10 @@ logger.info require('path')
 ## Output empty message
 logger.info()
 
+## Define any colors
+logger.format ':level.blue :msg.grey'
+logger.info('hello world')
+
+## Use the numeric placeholder
+logger.format ':level :0.grey :1.blue'
+logger.info('hello', 'world')

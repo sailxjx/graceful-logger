@@ -1,4 +1,4 @@
 module.exports =
-  default: 'color(:level:) :msg'
-  medium: 'color([:level :date]) :msg'
+  default: ':level.color :msg'
+  medium: ':level.color :date.color :msg'
   mute: false

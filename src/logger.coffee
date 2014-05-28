@@ -55,20 +55,33 @@ class Logger
 
   _log: ->
     return false unless @_format
-    msg = util.format.apply(util, arguments)
+    if arguments[0][0] is '%'  # The first argument is a placeholder
+      msgs = [util.format.apply(util, arguments)]
+    else
+      msgs = (msg for msg in arguments).map (msg) -> util.format.call util, msg
+    msg = msgs.join(' ')
 
-    raws = msg.split('\n').map (msg) =>
-      raw = @_format.replace(/\:level/g, @_level)
-              .replace(/\:date/g, new Date().toISOString())
-              .replace(/\:msg/g, msg)
-      # Print with color
-      if @_stream.isTTY
-        raw = raw.replace(/color\((.*?)\)/g, '$1'[@_color])
+    # Replace keywords and colors
+    raw = @_format.replace /(\:[a-z0-9]+)(\.[a-z]+)?/ig, (meet, code, color) =>
+      # Replace keywords
+      code = code[1..]
+      if /[0-9]+/.test code  # Numeric placeholder should be replaced with msg of the correct index
+        code = msgs[code] or ''
       else
-        raw = raw.replace(/color\((.*?)\)/g, '$1')
-      return raw
+        switch code
+          when 'level' then code = @_level
+          when 'date' then code = new Date().toISOString()
+          when 'msg' then code = msg
 
-    @_stream.write(raws.join('\n') + '\n')
+      # Replace color
+      if color? and @_stream.isTTY
+        color = color[1..]
+        color = @_color if color is 'color'  # Replace with pre defined colors
+        code = code[color]
+
+      return code
+
+    @_stream.write(raw + '\n')
 
   info: =>
     @_level = @info.level

@@ -13,20 +13,21 @@ describe 'logger#default', ->
   , write: (msg) -> output = msg
 
   promise = (str, prefix) ->
-    util.format.call(util, str).split('\n').map((msg) -> "#{prefix}#{msg}").join('\n') + '\n'
+    str = util.format.call(util, str)
+    return "#{prefix}#{str}" + '\n'
 
   it 'should output without date', ->
     msg = 'this is a message'
     logger.info(msg)
-    output.should.eql(promise(msg, 'info: '))
+    output.should.eql(promise(msg, 'info '))
 
     msg = { a: 'a', b: 'b' }
     logger.warn(msg)
-    output.should.eql(promise(msg, 'warn: '))
+    output.should.eql(promise(msg, 'warn '))
 
     msg = require('path')
     logger.err(msg)
-    output.should.eql(promise(msg, 'err!: '))
+    output.should.eql(promise(msg, 'err! '))
 
 describe 'logger#format', ->
   logger = new Logger
@@ -70,7 +71,7 @@ describe 'logger#debug', ->
     logger.setStream 'all'
     , write: (msg) -> output = msg
     logger.debug('debug message')
-    output.should.be.eql('debug: debug message\n')
+    output.should.be.eql('debug debug message\n')
 
 describe 'logger#setStream', ->
   file = path.join(__dirname, 'debug.txt')
@@ -83,7 +84,7 @@ describe 'logger#setStream', ->
     fs.readFile file
     , encoding: 'utf-8'
     , (err, content) ->
-      content.should.eql("info: #{msg}\n")
+      content.should.eql("info #{msg}\n")
       fs.unlink(file, done)
 
 describe 'logger#importUse', ->
@@ -94,29 +95,16 @@ describe 'logger#importUse', ->
   it 'should output message when use info as a single method', ->
     {info} = logger
     info('hello')
-    output.should.eql('info: hello\n')
+    output.should.eql('info hello\n')
 
   it 'should also work for alias', ->
     {error} = logger
     error('error')
-    output.should.eql('err!: error\n')
-
-describe 'logger#multiLine', ->
-  logger = new Logger
-  logger.setStream 'all'
-  , write: (msg) -> output = msg
-
-  it 'should get multi prefix lines with multi lines message', ->
-    logger.info '''
-    I
-    Am
-    Ok
-    '''
-    output.split('info').length.should.eql(4)
+    output.should.eql('err! error\n')
 
 describe 'logger#mod', ->
 
-  logger = new Logger('color(:level) :msg', debug: 1)
+  logger = new Logger(':level.color :msg', debug: 1)
   logger.setStream 'all',
     write: (msg) -> output = msg
     isTTY: true
@@ -127,3 +115,23 @@ describe 'logger#mod', ->
       logger[level].level = "user#{level}"
       logger[level] '%s', 'hello'
       output.should.eql("user#{level}".blue + ' hello\n')
+
+describe 'logger#othercolor', ->
+
+  it 'should output the blue message', ->
+    logger = new Logger(':msg.blue')
+    logger.setStream 'all',
+      write: (msg) -> output = msg
+      isTTY: true
+    logger.info('hello')
+    output.should.eql 'hello'.blue + '\n'
+
+describe 'logger#numeric', ->
+
+  it 'should output the grey title and white message', ->
+    logger = new Logger(':0.grey :1.white')
+    logger.setStream 'all',
+      write: (msg) -> output = msg
+      isTTY: true
+    logger.info 'hello', 'world'
+    output.should.eql 'hello'.grey + ' ' + 'world'.white + '\n'

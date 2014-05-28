@@ -12,24 +12,55 @@ A simple, slim, graceful logger for Nodejs
 ```coffeescript
 logger = require('../lib')
 
-logger.info('this is a message', 'hello')
+logger.info('Hello', 'World!')
 logger.warn({a: 'a', b: 'b'})
-logger.err(require('path'))
+logger.err(-> "This is a function")
 
-# logger with options
-# Initial with format
-logger1 = new logger.Logger('color([:level :date]) - :msg')
-# Or use format method
-logger2 = require('graceful-logger').format('color([:level :date]) - :msg')
+logger.format('medium')
 
-logger1.info('this is a message')
-logger1.warn({a: 'a', b: 'b'})
-logger1.err('this is an error')
+logger.info('Hello', 'World!')
+logger.warn({a: 'a', b: 'b'})
+logger.err(-> "This is a function")
+
+# Other features
+## Output multi lines
+logger.info '''
+This is a multi line message:
+Hello everyone.
+Have a nice day!
+'''
+
+## Output required package
+logger.info require('path')
+
+## Output empty message
+logger.info()
+
+## Define any colors
+logger.format ':level.blue :msg.grey'
+logger.info('hello world')
+
+## Use the numeric placeholder
+logger.format ':level :0.grey :1.blue'
+logger.info('hello', 'world')
+```
+
+# Benchmark
+```
+Console x 5,367 ops/sec ±2.96% (89 runs sampled)  # console.log
+Log x 5,556 ops/sec ±1.76% (93 runs sampled)      # The tiny log module written by tj
+Logger x 5,612 ops/sec ±0.95% (96 runs sampled)   # This module
+Fastest is Logger,Log,Console
 ```
 
 # ChangeLog
+## 0.4.0
+1. Remove multi-line prefix (v0.3.1) for the sake of efficiency
+2. User can define any color of the message by `.(color)` format, but it only works after the `:(label)` expression, e.g. `:level.green :msg.grey`
+3. The `:msg` flag now support numbers for express the message of the correct index, e.g. `:1.green :2.grey`, and you will get an  green 'hello' and a grey 'world' by using `logger.info('hello', 'world')`. Remember, the index start from 0.
+
 ## 0.3.2
-1. user can redefine `color` and `level` prefix by set the `color` and `level` property of each method.
+1. User can redefine `color` and `level` prefix by set the `color` and `level` property of each method.
 
 ## 0.3.1
 1. Add prefix to each line when messages have multi lines.
