@@ -39,15 +39,17 @@ obj = {
   "zalgo": "zalgo"
 }
 
+console.log "graceful-logger benchmark start..."
+
 suite
-.add 'Console', ->
+.add 'console', ->
   console.error msg, obj
-.add 'Log', ->
+.add 'log', ->
   log.error msg, obj
-.add 'Logger', ->
+.add 'graceful-logger', ->
   logger.err msg, obj
 .on 'cycle', (event) ->
   console.log String(event.target)
 .on 'complete', ->
-  console.log 'Fastest is ' + @filter('fastest').pluck('name')
+  console.log 'fastest is ' + @filter('fastest').pluck('name')
 .run()
