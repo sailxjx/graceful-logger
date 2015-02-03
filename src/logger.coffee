@@ -55,7 +55,7 @@ class Logger
 
   _log: ->
     return false unless @_format
-    if arguments[0][0] is '%'  # The first argument is a placeholder
+    if arguments[0]?[0] is '%'  # The first argument is a placeholder
       msgs = [util.format.apply(util, arguments)]
     else
       msgs = (msg for msg in arguments).map (msg) -> util.format.call util, msg
