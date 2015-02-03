@@ -1,6 +1,6 @@
 {
   "name": "graceful-logger",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "A simple, slim, graceful logger for Nodejs",
   "main": "./lib/index.js",
   "scripts": {
