@@ -4,7 +4,8 @@
   "description": "A simple, slim, graceful logger for Nodejs",
   "main": "./lib/index.js",
   "scripts": {
-    "test": "make test"
+    "test": "./node_modules/.bin/mocha --reporter spec test/test.js",
+    "bench": "coffee benchmark/benchmark.coffee 2>/dev/null"
   },
   "repository": {
     "type": "git",
@@ -29,7 +30,6 @@
   "devDependencies": {
     "should": "~2.1.0",
     "mocha": "~1.14.0",
-    "cake-dog": "~0.3.0",
     "coffee-script": "~1.7.1",
     "benchmark": "^1.0.0",
     "log": "^1.4.0"
