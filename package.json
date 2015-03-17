@@ -4,8 +4,9 @@
   "description": "A simple, slim, graceful logger for Nodejs",
   "main": "./lib/index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha --reporter spec test/test.js",
-    "bench": "coffee benchmark/benchmark.coffee 2>/dev/null"
+    "test": "./node_modules/.bin/mocha --require coffee-script/register --require should --reporter spec test/logger.coffee",
+    "bench": "coffee benchmark/benchmark.coffee 2>/dev/null",
+    "prepublish": "rm -rf lib && coffee -o lib -c src"
   },
   "repository": {
     "type": "git",
@@ -35,6 +36,6 @@
     "log": "^1.4.0"
   },
   "dependencies": {
-    "colors": "~0.6.2"
+    "colors": "^1.0.3"
   }
 }

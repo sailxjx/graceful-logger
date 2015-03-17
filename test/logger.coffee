@@ -3,7 +3,7 @@ fs = require 'fs'
 path = require 'path'
 should = require 'should'
 colors = require 'colors'
-{Logger} = require '../lib/index.js'
+{Logger} = require '../src/index'
 
 output = ''
 
